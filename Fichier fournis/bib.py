@@ -8,7 +8,9 @@ def test(v1, v2, err=0.001):
     return np.linalg.norm(vec(v1) - vec(v2) ) < err
 
 def test_n(n1, n2, err=0.001):
+    # a quoi ca sert ?
     return abs( n1 - n2 ) < err
+
 def v2s(v):
     """
         Return a string representation of a vector
@@ -22,7 +24,7 @@ def v2s(v):
 def normalize( v ):
     """
         Return the normalized vector
-    
+
         Example:
         >>> normalize( vec([0.0, 0.0, 0.0]) )
         >>> normalize( vec([15.0, 20.0, 0.0]) )
@@ -49,7 +51,7 @@ def angle(vi, vi1, ai1):
         signe = -1
     return signe * np.arccos( np.dot( vi, vi1) )
 
-def gen():
+def gen():  #Genere un nouveau repaire.
     for i in [-1,1]:
         for j in [-1,1]:
             for k in [-1,1]:
@@ -66,21 +68,21 @@ def norm_sup(l1 ,l2):
 class arm:
     def solve_min(self, thetas=None):
         """
-            Return True if a solution had been founded and False in the other
+            Return True if a solution had been found and False in the other
             case.
             Example:
 
             >>> a = arm(
-            ...     end_position = [0.01, 0.06, 0.3] , 
-            ...     end_normal = [0.0, -0.6, -1.0], 
+            ...     end_position = [0.01, 0.06, 0.3] ,
+            ...     end_normal = [0.0, -0.6, -1.0],
             ...     end_direction = [1.0,0.0,0.0],
             ...     arm_size = [0.078, 0.067, 0.067, 0.067, 0.064]
             ... )
             >>> a.solve_min()
             True
             >>> a = arm(
-            ...     end_position = [0.0, 0.0, 0.343] , 
-            ...     end_normal = [0.0, 0.0, -1.0], 
+            ...     end_position = [0.0, 0.0, 0.343] ,
+            ...     end_normal = [0.0, 0.0, -1.0],
             ...     end_direction = [1.0,0.0,0.0],
             ...     arm_size = [0.078, 0.067, 0.067, 0.067, 0.064]
             ... )
@@ -108,7 +110,7 @@ class arm:
         return True
     def solve(self, signes=[1,1,1]):
         """
-            >>> a = arm( 
+            >>> a = arm(
             ...     end_position = vec([10,11,12]),
             ...     end_normal = vec([13,14,15]),
             ...     end_direction = vec([16,17,18]),
@@ -116,7 +118,7 @@ class arm:
             ... )
             >>> a.solve()
             False
-            >>> a = arm( 
+            >>> a = arm(
             ...     end_position = vec([2.0,0.0,0.0]),
             ...     end_normal = vec([0,0,-1]),
             ...     end_direction = vec([1,0,0]),
@@ -187,38 +189,49 @@ class arm:
         self.o1 = self.o0 + self.v0
 
         self.v4 = - self.n5 * l4
-        self.o4 = self.o5 - self.v4
+        self.o4 = self.o5 - self.v4  #Pourquoi un moins ?
 
         o1o5 = self.o5 - self.o1
         if np.linalg.norm(o1o5)==0:
             return False
 
-        self.a2 = normalize( np.cross(o1o5 , self.v4) )
+        self.a2 = normalize( np.cross(o1o5 , self.v4) )  #O1O5 vectorielle v4
 
+        """
+        Verification que A2x et A2y different de 0
+        """
         if self.a2 is None:
             if o1o5[0] == 0.0 and o1o5[1] == 0.0:
-                self.a2 = vec([1.0,0.0,0.0])
+                self.a2 = vec([1.0,0.0,0.0]) #fixer a2 à 1,0,0
             else :
-                self.a2 = normalize( vec([o1o5[1],-o1o5[0],0.0]) )
+                self.a2 = normalize( vec([o1o5[1],-o1o5[0],0.0]) ) #pourquoi vecteur de la forme y,x,z ?
 
         self.c0 = s_t0 * self.a2[1] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 )
         self.s0 = - s_t0 * self.a2[0] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 )
 
+
         self.a1 = vec( [self.c0, self.s0, 0.0] )
 
         self.g = self.a2[0] * self.s0 - self.a2[1] * self.c0
+
+        """
+        Verification que G**2+A2z**2 different de 0
+        """
         if self.g**2 + self.a2[2]**2 > 0.0:
             self.c1 = s_t1 * self.g / np.sqrt( self.g**2 + self.a2[2]**2 )
             self.s1 = - s_t1 * self.a2[2] / np.sqrt( self.g**2 + self.a2[2]**2 )
         else:
             self.c1 = s_t1
             self.s1 = 0.0
-        self.v1 = vec( [ self.s1*self.s0, -self.s1*self.c0, self.c1 ] ) * l2
-        self.o2 = self.o0 + self.v0 + self.v1
+        self.v1 = vec( [ self.s1*self.s0, -self.s1*self.c0, self.c1 ] ) * l2 #erreur de nom de longueur normalement l1
+        self.o2 = self.o0 + self.v0 + self.v1  #O1+v1 ?
 
         o2o4 = self.o4 - self.o2
 
         no2o4 = np.linalg.norm(o2o4)
+        """
+        Verification que norm(o4o2) different de 0
+        """
         if no2o4 == 0:
             return False
         if no2o4 > l2 + l3 :
@@ -230,7 +243,7 @@ class arm:
 
         self.M = np.matrix([self.u, self.v, self.w]) #.getT()
 
-        self.alpha = ( l3**2 - l2**2 + no2o4**2 )/( 2*no2o4 )
+        self.alpha = ( l3**2 - l2**2 + no2o4**2 )/( 2*no2o4 )    #self.alpha= (no2o4**2+l2**2-l3**2)/( 2*no2o4 ) erreur ?
 
         if l2**2 - self.alpha**2 < 0 :
             return False
@@ -238,7 +251,7 @@ class arm:
         self.beta = s_b * np.sqrt( l2**2 - self.alpha**2 )
 
         self.o3_r = vec([self.alpha, self.beta, 0])
-        self.o3 = (self.o3_r * self.M).A1 + self.o2
+        self.o3 = (self.o3_r * self.M).A1 + self.o2 # self.o3 = self.alpha*self.u+self.beta*self.v+self.o2 doute ?
 
         self.v2 = self.o3 - self.o2
         self.v3 = self.o4 - self.o3
@@ -250,9 +263,9 @@ class arm:
         self.theta4 = angle( self.v3, self.v4, self.a2 )
         self.theta5 = angle( self.x5, self.a2, self.n5 )
         self.thetas = [
-            self.theta0, self.theta1, 
-            self.theta2, self.theta3, 
-            self.theta4, self.theta5 
+            self.theta0, self.theta1,
+            self.theta2, self.theta3,
+            self.theta4, self.theta5
         ]
         return True
 
@@ -265,7 +278,7 @@ class arm:
             Define the kinematic of an arm
 
             Example:
-            >>> a = arm( 
+            >>> a = arm(
             ...     end_position = vec([10,11,12]),
             ...     end_normal = vec([13,14,15]),
             ...     end_direction = vec([16,17,18]),
@@ -300,15 +313,15 @@ class arm:
     def __repr__(self):
         return (
             "<p1 : %s, n1: %s, d1, %s | "%(
-                str(v2s(self.o0)), 
+                str(v2s(self.o0)),
                 str(v2s(self.n0)),
                 str(v2s(self.x0))
             ) +
             "p2 : %s, n2: %s, d2 %s"%(
-                str(v2s(self.o5)), 
+                str(v2s(self.o5)),
                 str(v2s(self.n5)),
                 str(v2s(self.x5))
-            ) + 
+            ) +
             " | size : [%.1f, %.1f, %.1f, %.1f, %.1f]>"%(
                 self.size[0],
                 self.size[1],
@@ -321,4 +334,3 @@ class arm:
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-
