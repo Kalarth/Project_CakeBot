@@ -151,3 +151,9 @@ class arm:
 
 
 a = arm()
+
+a.update([0.102,0,0.374], [-1,0,0],[0,0,-1],a.arm_size) #MARCHE
+time.sleep(2)
+a.update([],[],[],a.arm_size)
+
+while True:
