@@ -109,7 +109,7 @@ class arm:
             return False
         self.solve(signes=min_signes)
         return True
-    def solve(self, signes=[1,1,1]):
+    def solve(self, signes=[1,1,1],theta0=None):
         """
             >>> a = arm(
             ...     end_position = vec([10,11,12]),
@@ -190,7 +190,7 @@ class arm:
         self.o1 = self.o0 + self.v0
 
         self.v4 = - self.n5 * l4
-        self.o4 = self.o5 - self.v4  #Pourquoi un moins ?
+        self.o4 = self.o5 + self.n5 * l4  #Pourquoi un moins ?
 
         o1o5 = self.o5 - self.o1
         if np.linalg.norm(o1o5)==0:
@@ -201,35 +201,55 @@ class arm:
         """
         Verification que A2x et A2y different de 0
         """
-        if self.a2 is None:
+        print("######")
+        print self.a2
+        if self.a2 is None: #Si o1o5 et v4 sont colineair on choisit un vecteur au hasard perpendiculaire a O1O5
             if o1o5[0] == 0.0 and o1o5[1] == 0.0:
                 self.a2 = vec([1.0,0.0,0.0]) #fixer a2 a  1,0,0
             else :
-                self.a2 = normalize( vec([o1o5[1],-o1o5[0],0.0]) ) #pourquoi vecteur de la forme y,x,z ?
+                self.a2 = normalize( vec([o1o5[1],-o1o5[0],0.0]) ) #pourquoi vecteur de la forme y,x,z ? POSER QUESTION
 
-        self.c0 = s_t0 * self.a2[1] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 )
-        self.s0 = - s_t0 * self.a2[0] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 )
+        print self.a2
+        #print s_t0, "signe t0"
+        #print self.a2[0], "A2x"
+        #print self.a2[1], "A2y"
+        if self.a2[0]**2 +  self.a2[1]**2 > 0.0:
+            self.c0 = s_t0 * self.a2[1] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 ) #JEVALIDE
+            self.s0 = - s_t0 * self.a2[0] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 ) #JEVALIDE
+        else:
+            if theta0 is None:
+                self.c0 = 1.0
+                self.s0 = 0.0
+            else:
+                self.c0 = np.cos(theta0)
+                self.s0 = np.sin(theta0)
+        #print self.c0, "C0"
+        #print self.s0, "S0"1
 
+        self.a1 = vec( [self.c0, self.s0, 0.0] ) #JEVALIDE
 
-        self.a1 = vec( [self.c0, self.s0, 0.0] )
-
-        self.g = self.a2[0] * self.s0 - self.a2[1] * self.c0
+        self.g = self.a2[0] * self.s0 - self.a2[1] * self.c0 #JEVALIDE
 
         """
-        Verification que G**2+A2z**2 different de 0
+        _Verification que G**2+A2z**2 different de 0
         """
         if self.g**2 + self.a2[2]**2 > 0.0:
-            self.c1 = s_t1 * self.g / np.sqrt( self.g**2 + self.a2[2]**2 )
-            self.s1 = - s_t1 * self.a2[2] / np.sqrt( self.g**2 + self.a2[2]**2 )
+            self.c1 = s_t1 * self.g / np.sqrt( self.g**2 + self.a2[2]**2 ) #JEVALIDE
+            self.s1 = - s_t1 * self.a2[2] / np.sqrt( self.g**2 + self.a2[2]**2 ) #JEVALIDE
         else:
+            print("THIS CASE SHOULD NOT ARRIVE SINCE G != 0.")
+            print self.a2
+            print self.g
+            print self.s0
+            print self.c0
             self.c1 = s_t1
             self.s1 = 0.0
         self.v1 = vec( [ self.s1*self.s0, -self.s1*self.c0, self.c1 ] ) * l1 #erreur de nom de longueur normalement l1
         self.o2 = self.o0 + self.v0 + self.v1  #O1+v1 ?
 
-        o2o4 = self.o4 - self.o2
+        o2o4 = self.o4 - self.o2 #JEVALIDE
 
-        no2o4 = np.linalg.norm(o2o4)
+        no2o4 = np.linalg.norm(o2o4) #JEVALIDE
         """
         Verification que norm(o4o2) different de 0
         """
@@ -238,11 +258,11 @@ class arm:
         if no2o4 > l2 + l3 :
             return False
 
-        self.u = normalize( o2o4 )
-        self.w = self.a2
-        self.v = np.cross( self.w, self.u )
+        self.u = normalize( o2o4 ) #JEVALIDE
+        self.w = self.a2 #Doute, verifier si a2 est normalise
+        self.v = np.cross( self.w, self.u ) #JEVALIDE
 
-        self.M = np.matrix([self.u, self.v, self.w]) #.getT()
+        #self.M = np.matrix([self.u, self.v, self.w]) #.getT()
 
         self.alpha= (no2o4**2+l2**2-l3**2)/( 2*no2o4 )   #self.alpha= (no2o4**2+l2**2-l3**2)/( 2*no2o4 ) erreur ?
 
@@ -251,15 +271,16 @@ class arm:
 
         self.beta = s_b * np.sqrt( l2**2 - self.alpha**2 )
 
-        self.o3_r = vec([self.alpha, self.beta, 0])
-        self.o3 = (self.o3_r * self.M).A1 + self.o2 # self.o3 = self.alpha*self.u+self.beta*self.v+self.o2 doute ?
+        #self.o3_r = vec([self.alpha, self.beta, 0])
+        #self.o3 = (self.o3_r * self.M).A1 + self.o2    # self.o3 = self.alpha*self.u+self.beta*self.v+self.o2 doute ?
+        self.o3 = self.alpha*self.u+self.beta*self.v+self.o2
 
         self.v2 = self.o3 - self.o2
         self.v3 = self.o4 - self.o3
 
         self.theta0 = angle( self.x0, self.a1, vec([0,0,1.0]) )
         self.theta1 = angle( self.v0, self.v1, self.a1 )
-        self.theta2 = angle( self.v1, self.v2, self.a2 )
+        self.theta2 = -angle( self.v1, self.v2, self.a2 ) #Doute
         self.theta3 = angle( self.v2, self.v3, self.a2 )
         self.theta4 = angle( self.v3, self.v4, self.a2 )
         self.theta5 = angle( self.x5, self.a2, self.n5 )
@@ -334,4 +355,4 @@ class arm:
 
 if __name__ == "__main__":
     import doctest
-    
+    doctest.testmod()
