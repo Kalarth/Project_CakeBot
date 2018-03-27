@@ -3,6 +3,7 @@ import pypot.robot
 import bib
 #import DEFAULTbib as bib
 import math
+import time
 
 def radian_to_degree(angle):
     return 360.0*angle/(2*math.pi)
@@ -95,10 +96,7 @@ class arm:
         self.arm_size = self.first_arm_size
         self.update()
 
-    def update(
-        self, end_position=None, end_normal=None, end_direction=None,
-        arm_size=None
-    ):
+    def update(self, end_position=None, end_normal=None, end_direction=None,arm_size=None):
         if end_position is None :
             end_position = self.end_position
         if end_normal is None :
@@ -107,17 +105,12 @@ class arm:
             end_direction = self.end_direction
         if arm_size is None :
             arm_size = self.arm_size
-        arm_calculus = bib.arm(
-            end_position, end_normal, end_direction, arm_size
-        )
+        arm_calculus = bib.arm(end_position, end_normal, end_direction, arm_size)
         if not arm_calculus.solve_min():
             print("Position, normal and direction unreachable !")
             return False
         for i in range( len(self.bras.arm) ):
-            if not(
-                (arm_calculus.thetas[i] >= self.angle_limit[i][0]) and
-                (arm_calculus.thetas[i] <= self.angle_limit[i][1])
-            ):
+            if not((arm_calculus.thetas[i] >= self.angle_limit[i][0]) and (arm_calculus.thetas[i] <= self.angle_limit[i][1])):
                 print("Angle limit is reached !")
                 return False
         self.end_position = bib.vec(end_position)
@@ -128,19 +121,14 @@ class arm:
             self.set_angle(i, arm_calculus.thetas[i])
         return True
 
-    def increase(
-        self, end_position=None, end_normal=None, end_direction=None
-    ):
+    def increase(self, end_position=None, end_normal=None, end_direction=None):
         if not end_position is None :
             end_position = bib.vec(self.end_position) + end_position
         if not end_normal is None :
             end_normal = bib.vec(self.end_normal) + end_normal
         if not end_direction is None :
             end_direction = bib.vec(self.end_direction) + end_direction
-        return self.update(
-            end_position=end_position, end_normal=end_normal,
-            end_direction=end_direction
-        )
+        return self.update(end_position=end_position, end_normal=end_normal,end_direction=end_direction)
 
     def __repr__(self):
         return "<p=%s, n=%s, d=%s>"%(self.end_position, self.end_normal, self.end_direction)
@@ -149,11 +137,20 @@ class arm:
         self.bras.arm[i].compliant = False
         self.bras.arm[i].goto_position(radian_to_degree(angle), 2)
 
-
 a = arm()
+"""
+a.update([a.arm_size[4],0,sum(a.arm_size)-a.arm_size[4]], [-1,0,0],[0,0,-1],a.arm_size) #MARCHE
+time.sleep(5)
+a.update([a.arm_size[3]+a.arm_size[4],0,a.arm_size[0]+a.arm_size[1]+a.arm_size[2]], [-1,0,0],[0,0,-1],a.arm_size) #MARCHE
+time.sleep(5)
+a.update([a.arm_size[2]+a.arm_size[3]+a.arm_size[4],0,a.arm_size[0]+a.arm_size[1]], [-1,0,0],[0,0,-1],a.arm_size) #PROBLEME D'ANGLE
+"""
+a.update([a.arm_size[2]+a.arm_size[3]+a.arm_size[4],a.arm_size[1],a.arm_size[0]], [-1,0,0],[0,0,-1],a.arm_size) #ANGLE LIMIT REACHED
+time.sleep(5)
+#a.update([a.arm_size[2],0,sum(a.arm_size)-a.arm_size[2]], [0,0,-1],[0,0,-1],a.arm_size) #JEVALIDE PUTAIN MOUVEMENT STANDARD
+#time.sleep(5)
+#self.first_arm_size = [0.116, 0.067, 0.124, 0.067, 0.102]
 
-a.update([0.102,0,0.374], [-1,0,0],[0,0,-1],a.arm_size) #MARCHE
-time.sleep(2)
-a.update([],[],[],a.arm_size)
-
-while True:
+#time.sleep(5)
+#a.update([0,0,sum(a.arm_size)-0.005], [0,0,-1],[0,0,-1],a.arm_size)
+#time.sleep(5)
