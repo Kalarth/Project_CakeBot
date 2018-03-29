@@ -323,13 +323,13 @@ class arm:
             >>> test(a.x5, (0.54276, 0.57668, 0.61060))
             True
         """
-        self.o0 = vec([0.0, 0.0, 0.0])
-        self.n0 = vec([0.0, 0.0, 1.0])
-        self.x0 = vec([1.0, 0.0, 0.0])
+        self.o5 = vec([0.0, 0.0, 0.0])
+        self.n5 = vec([0.0, 0.0, 1.0])
+        self.x5 = vec([1.0, 0.0, 0.0])
 
-        self.o5 = vec(end_position)
-        self.n5 = normalize( vec(end_normal) )
-        self.x5 = normalize( vec(end_direction) )
+        self.o0 = vec(end_position)
+        self.n0 = normalize( vec(end_normal) )
+        self.x0 = normalize( vec(end_direction) )
         self.size = list(map(float, arm_size))
         self.thetas = None
 

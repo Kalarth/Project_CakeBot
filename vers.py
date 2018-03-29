@@ -1,7 +1,7 @@
 import pypot.dynamixel
 import pypot.robot
 import bib
-#import DEFAULTbib as bib
+#import bibinverse as bib
 import math
 import time
 
@@ -72,11 +72,16 @@ class arm:
         }
         self.bras = pypot.robot.from_config(self.bras_config)
 
-        #self.first_arm_size = [0.078, 0.067, 0.067, 0.067, 0.064]
-        self.first_arm_size = [0.116, 0.067, 0.124, 0.067, 0.102]
+        #self.first_arm_size = [0.078, 0.067, 0.067, 0.067, 0.064] OBSOLETE
+        self.first_arm_size = [0.116, 0.067, 0.124, 0.067, 0.102] #SENS DIRECT
+
+        self.first_start_position = [0,0,0]
+        self.first_start_normal = [0,0,1]
+        self.first_start_direction = [1,0,0]
         self.first_end_position = [0.0, 0.0, sum(self.first_arm_size)]
         self.first_end_normal = [0.0, 0.0, -1.0]
         self.first_end_direction = [1.0, 0.0, 0.0]
+
 
         self.angle_limit = [
             [degree_to_radian(-102), degree_to_radian(102)],
@@ -90,6 +95,9 @@ class arm:
         self.initialize()
 
     def initialize(self):
+        self.start_position = self.first_start_position
+        self.start_position = self.first_start_normal
+        self.start_position = self.first_start_direction
         self.end_position = self.first_end_position
         self.end_normal = self.first_end_normal
         self.end_direction = self.first_end_direction
@@ -138,19 +146,33 @@ class arm:
         self.bras.arm[i].goto_position(radian_to_degree(angle), 2)
 
 a = arm()
+time.sleep(5)
 """
 a.update([a.arm_size[4],0,sum(a.arm_size)-a.arm_size[4]], [-1,0,0],[0,0,-1],a.arm_size) #MARCHE
 time.sleep(5)
 a.update([a.arm_size[3]+a.arm_size[4],0,a.arm_size[0]+a.arm_size[1]+a.arm_size[2]], [-1,0,0],[0,0,-1],a.arm_size) #MARCHE
 time.sleep(5)
-a.update([a.arm_size[2]+a.arm_size[3]+a.arm_size[4],0,a.arm_size[0]+a.arm_size[1]], [-1,0,0],[0,0,-1],a.arm_size) #PROBLEME D'ANGLE
 """
-a.update([a.arm_size[2]+a.arm_size[3]+a.arm_size[4],a.arm_size[1],a.arm_size[0]], [-1,0,0],[0,0,-1],a.arm_size) #ANGLE LIMIT REACHED
-time.sleep(5)
-#a.update([a.arm_size[2],0,sum(a.arm_size)-a.arm_size[2]], [0,0,-1],[0,0,-1],a.arm_size) #JEVALIDE PUTAIN MOUVEMENT STANDARD
-#time.sleep(5)
-#self.first_arm_size = [0.116, 0.067, 0.124, 0.067, 0.102]
 
+
+#####TEST DU REPERE DIRECT########
+#a.update([a.arm_size[2]+a.arm_size[3]+a.arm_size[4],0,a.arm_size[0]+a.arm_size[1]], [-1,0,0],[0,0,-1],a.arm_size) #POINTE x
 #time.sleep(5)
-#a.update([0,0,sum(a.arm_size)-0.005], [0,0,-1],[0,0,-1],a.arm_size)
+#a.update([0,a.arm_size[2]+a.arm_size[3]+a.arm_size[4],a.arm_size[0]+a.arm_size[1]], [0,-1,0],[0,0,-1],a.arm_size) #POINTE y
 #time.sleep(5)
+
+"""
+a.update([a.arm_size[2]+a.arm_size[1]+a.arm_size[0],0,a.arm_size[4]+a.arm_size[3]], [-1,0,0],[0,0,-1],a.arm_size) #POINTE x
+time.sleep(5)
+#a.update([0,a.arm_size[2]+a.arm_size[3]+a.arm_size[4],a.arm_size[0]+a.arm_size[1]], [0,-1,0],[0,0,-1],a.arm_size) #POINTE y
+time.sleep(5)
+"""
+
+
+"""
+a.update([0,-(a.arm_size[2]+a.arm_size[3]+a.arm_size[4]),a.arm_size[0]+a.arm_size[1]], [0,1,0],[0,0,-1],a.arm_size) #POINTE -y MARCHE
+time.sleep(5)
+
+a.update([-(a.arm_size[2]+a.arm_size[3]+a.arm_size[4]),0,a.arm_size[0]+a.arm_size[1]], [1,0,0],[0,0,-1],a.arm_size) #POINTE -x
+time.sleep(5)
+"""
