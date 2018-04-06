@@ -202,29 +202,35 @@ class arm:
         Verification que A2x et A2y different de 0
         """
         print("######")
-        print self.a2
+        #print self.a2
         if self.a2 is None: #Si o1o5 et v4 sont colineair on choisit un vecteur au hasard perpendiculaire a O1O5
             if o1o5[0] == 0.0 and o1o5[1] == 0.0:
                 self.a2 = vec([1.0,0.0,0.0]) #fixer a2 a  1,0,0
             else :
                 self.a2 = normalize( vec([o1o5[1],-o1o5[0],0.0]) ) #pourquoi vecteur de la forme y,x,z ? POSER QUESTION
 
-        print self.a2
+        #print self.a2
         #print s_t0, "signe t0"
         #print self.a2[0], "A2x"
         #print self.a2[1], "A2y"
+        print s_t0
         if self.a2[0]**2 +  self.a2[1]**2 > 0.0:
+            print "je suis dans A2"
             self.c0 = s_t0 * self.a2[1] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 ) #JEVALIDE
             self.s0 = - s_t0 * self.a2[0] / np.sqrt( self.a2[0]**2 +  self.a2[1]**2 ) #JEVALIDE
         else:
             if theta0 is None:
+                print "theta0 is none"
                 self.c0 = 1.0
                 self.s0 = 0.0
             else:
+                print "theta0 is not none"
+                print theta0
                 self.c0 = np.cos(theta0)
                 self.s0 = np.sin(theta0)
-        #print self.c0, "C0"
-        #print self.s0, "S0"1
+
+        print self.c0, "C0"
+        print self.s0, "S0"
 
         self.a1 = vec( [self.c0, self.s0, 0.0] ) #JEVALIDE
 

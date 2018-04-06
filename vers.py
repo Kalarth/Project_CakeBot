@@ -31,6 +31,7 @@ class arm:
                     'type': 'AX-12',
                     'id': 22,
                     'angle_limit': [-102.0, 102.0],
+                    #'angle_limit': [-149.0, 149.0],
                     'offset': 0.0
                 },
                 'm1': {
@@ -66,6 +67,7 @@ class arm:
                     'type': 'AX-12',
                     'id': 13,
                     'angle_limit': [-102.0, 102.0],
+                    #'angle_limit': [-149.0, 149.0],
                     'offset': 0.0
                 },
             },
@@ -143,10 +145,27 @@ class arm:
 
     def set_angle(self, i, angle):
         self.bras.arm[i].compliant = False
-        self.bras.arm[i].goto_position(radian_to_degree(angle), 2)
+        self.bras.arm[i].goto_position(radian_to_degree(angle), 6)
 
 a = arm()
-time.sleep(5)
+#time.sleep(5)
+print "Moving"
+########TEST DE MOUVEMENT############
+time.sleep(10)
+a.update([0,a.arm_size[2],0],[0,0,1],[0,1,0],a.arm_size) #MOUVEMENT EN Y
+time.sleep(10)
+a.update([0,0,sum(a.arm_size)],[0,0,-1],[0,1,0],a.arm_size) #REDRESSEMENT
+time.sleep(10)
+#a.update([(a.arm_size[2]),0,0],[0,0,1],[1,0,0],a.arm_size) #MOUVEMENT INVERSE EN X ATTENTION DIRECTION
+#time.sleep(5)
+#a.update([0,0,sum(a.arm_size)],[0,0,-1],[0,1,0],a.arm_size) #REDRESSEMENT
+#time.sleep(5)
+a.update([0,(a.arm_size[2]),0],[0,0,1],[0,-1,0],a.arm_size) #MOUVEMENT INVERSE EN -Y ATTENTION DIRECTION
+time.sleep(10)
+a.update([0,0,sum(a.arm_size)],[0,0,-1],[0,1,0],a.arm_size) #REDRESSEMENT
+time.sleep(10)
+#a.close()
+
 """
 a.update([a.arm_size[4],0,sum(a.arm_size)-a.arm_size[4]], [-1,0,0],[0,0,-1],a.arm_size) #MARCHE
 time.sleep(5)
@@ -156,23 +175,23 @@ time.sleep(5)
 
 
 #####TEST DU REPERE DIRECT########
-#a.update([a.arm_size[2]+a.arm_size[3]+a.arm_size[4],0,a.arm_size[0]+a.arm_size[1]], [-1,0,0],[0,0,-1],a.arm_size) #POINTE x
-#time.sleep(5)
-#a.update([0,a.arm_size[2]+a.arm_size[3]+a.arm_size[4],a.arm_size[0]+a.arm_size[1]], [0,-1,0],[0,0,-1],a.arm_size) #POINTE y
-#time.sleep(5)
-
 """
-a.update([a.arm_size[2]+a.arm_size[1]+a.arm_size[0],0,a.arm_size[4]+a.arm_size[3]], [-1,0,0],[0,0,-1],a.arm_size) #POINTE x
+a.update([a.arm_size[2]+a.arm_size[3]+a.arm_size[4],0,a.arm_size[0]+a.arm_size[1]], [-1,0,0],[0,0,-1],a.arm_size) #POINTE x
 time.sleep(5)
-#a.update([0,a.arm_size[2]+a.arm_size[3]+a.arm_size[4],a.arm_size[0]+a.arm_size[1]], [0,-1,0],[0,0,-1],a.arm_size) #POINTE y
+print "Moving"
+a.update([0,a.arm_size[2]+a.arm_size[3]+a.arm_size[4],a.arm_size[0]+a.arm_size[1]], [0,-1,0],[0,0,-1],a.arm_size) #POINTE y
 time.sleep(5)
-"""
+print "Moving"
 
 
-"""
+
 a.update([0,-(a.arm_size[2]+a.arm_size[3]+a.arm_size[4]),a.arm_size[0]+a.arm_size[1]], [0,1,0],[0,0,-1],a.arm_size) #POINTE -y MARCHE
 time.sleep(5)
+print "Moving"
 
-a.update([-(a.arm_size[2]+a.arm_size[3]+a.arm_size[4]),0,a.arm_size[0]+a.arm_size[1]], [1,0,0],[0,0,-1],a.arm_size) #POINTE -x
+a.update([-(a.arm_size[2]+a.arm_size[3]+a.arm_size[4]),0,a.arm_size[0]+a.arm_size[1]], [1,0,0],[0,0,-1],a.arm_size) #POINTE -x  MARCHE PAS, POINTE x
 time.sleep(5)
+print "Moving"
 """
+time.sleep(5)
+print "Moving"
