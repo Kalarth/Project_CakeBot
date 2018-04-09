@@ -44,8 +44,8 @@ module socle(profondeur, epaisseur){
         translate([-lxn, -ly/2, 0]){
             cube([lx, ly, profondeur+epaisseur]);  
         }
-        translate([-3.6,-10,-1]){
-        cube([7.3,20,5.5]);
+        translate([-3.6,-10.1,-1]){
+        cube([7.3,20.2,5.5]);
         }
         
         translate([-6.5, -27/2,0]){

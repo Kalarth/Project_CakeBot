@@ -63,7 +63,7 @@ module socle(profondeur, epaisseur){
         }
     }
 }
-socle(profondeur=(3.8+1.7+2*dec),epaisseur = 2);
+socle(profondeur=(3.8+1.7+2*dec),epaisseur = 1.325);
 lz = 40 - 32 - 5 + dec;
 translate([0,0,-(lz+2)]){
     //socle(profondeur = lz, epaisseur=2 );
