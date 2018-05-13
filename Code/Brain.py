@@ -11,19 +11,26 @@ import Fork
 class Brain():
     """docstring for Brain."""
 
-    def Tool_handler(self):
+    def Pickup_Cake_Fork(self):
         self.Forkmode.pickup_fork(Position)
         self.Forkmode.pickup_cake(Position)
         self.Forkmode.present_cake()
 
     def Find_Way(self):
-        way=self.Cam.getspace() #PLACEHOLDER
+        self.Camscan()
         for i in range(len(way)):
-            self.Walkmode.walkto_point(way[i])
-        self.Tool_handler()
+            self.Walkmode.walkto_point(self.way[i])
+        self.Pickup_Cake_Fork()
 
-    def __init__(self, arg):
-        self.arg = arg
+    def Camscan(self):
+        self.way=self.Cam.getspace() #PLACEHOLDER
+
+    def Deactivate(self):
+        M0.Turn_OFF()
+        M5.Turn_OFF()
+        M0.destroy()
+
+    def __init__(self):
         self.A = bot.Arm()
         self.M0 = mag.Magnet(12,25)
         self.M5 = mag.Magnet(33,25)
