@@ -18,12 +18,13 @@ class Brain():
 
     def Find_Way(self):
         self.Camscan()
-        for i in range(len(way)):
+        for i in range(len(self.way)):
             self.Walkmode.walkto_point(self.way[i])
         self.Pickup_Cake_Fork()
 
     def Camscan(self):
-        self.way=self.Cam.getspace() #PLACEHOLDER
+        self.Cam.deplacement() #PLACEHOLDER
+        self.way = self.Cam.listpos
 
     def Deactivate(self):
         M0.Turn_OFF()
@@ -37,7 +38,8 @@ class Brain():
         self.M0.TURN_ON()
         self.Walkmode=Walk.Walk(A,M0,M5)
         self.Forkmode=.Fork.Fork(A,M0,M5)
-        self.Cam=Camera.Camera(A.arm_size[2])
+        self.Cam=Camera.Camera(Walkmode.max_distance)
+        self.way=[]
 """
 A = bot.arm()
 M0 = mag.Magnet(12,25)
