@@ -62,35 +62,35 @@ class walk(Move):
     Hardcoded Move functions
     """
     def move_x(self):
-        Arm.update([Arm.arm_size[2],0,0],[0,0,1],[0,1,0],Arm.arm_size) #MOUVEMENT EN X
+        Arm.update([self.max_distance,0,0],[0,0,1],[0,1,0],Arm.arm_size) #MOUVEMENT EN X
         time.sleep(8)
         M5.Turn_ON()
         M0.Turn_OFF()
         self.reset_motors()
 
     def move_y(self):
-        Arm.update([0,Arm.arm_size[2],0],[0,0,1],[0,1,0],Arm.arm_size) #MOUVEMENT EN Y
+        Arm.update([0,self.max_distance,0],[0,0,1],[0,1,0],Arm.arm_size) #MOUVEMENT EN Y
         time.sleep(8)
         M5.Turn_ON()
         M0.Turn_OFF()
         self.reset_motors()
 
     def move_minus_y(self):
-        Arm.update([0,-Arm.arm_size[2],0],[0,0,1],[0,1,0],Arm.arm_size) #MOUVEMENT EN Y
+        Arm.update([0,-self.max_distance,0],[0,0,1],[0,1,0],Arm.arm_size) #MOUVEMENT EN Y
         time.sleep(8)
         M5.Turn_ON()
         M0.Turn_OFF()
         self.reset_motors()
 
     def inv_move_x(self):
-        Arm.update([(Arm.arm_size[2]),0,0],[0,0,1],[1,0,0],Arm.arm_size) #MOUVEMENT INVERSE EN X ATTENTION DIRECTION
+        Arm.update([(self.max_distance),0,0],[0,0,1],[1,0,0],Arm.arm_size) #MOUVEMENT INVERSE EN X ATTENTION DIRECTION
         time.sleep(8)
         M0.Turn_ON()
         M5.Turn_OFF()
         self.reset_motors()
 
     def inv_move_y(self):
-        Arm.update([0,(Arm.arm_size[2]),0],[0,0,1],[0,-1,0],Arm.arm_size) #MOUVEMENT INVERSE EN -Y ATTENTION DIRECTION
+        Arm.update([0,(self.max_distance),0],[0,0,1],[0,-1,0],Arm.arm_size) #MOUVEMENT INVERSE EN -Y ATTENTION DIRECTION
         time.sleep(10)
         M0.Turn_ON()
         M5.Turn_OFF()
