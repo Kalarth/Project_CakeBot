@@ -38,19 +38,25 @@ class walk(Move):
         """
         orientation=Move.checkmagnets(self)
         if orientation == 1:
-            self.Arm.update(Position,[0,0,1],[0,1,0],self.Arm.arm_size)
+            self.Arm.update([Position[0],Position[1],0.02],[0,0,1],[0,1,0],self.Arm.arm_size)
             time.sleep(8)
+            self.Arm.update(Position,[0,0,1],[0,1,0],self.Arm.arm_size)
+
             self.M5.Turn_ON()
+            time.sleep(3)
             self.M0.Turn_OFF()
 
 
         if orientation == 2: #NOT FINISHED, NEED TO FIX THE DIRECTION TODO
             Direction = bib.normalize(bib.vec(Position))
             #Arm.update(Position,[0,0,1],[0,1,0],Arm.arm_size)
+            self.Arm.update([Position[0],Position[1], 0.02],[0,0,1],Direction,self.Arm.arm_size) #NEED TO TEST
+            time.sleep(8)
             self.Arm.update(Position,[0,0,1],Direction,self.Arm.arm_size) #NEED TO TEST
             time.sleep(8)
-            self.M5.Turn_ON()
-            self.M0.Turn_OFF()
+            self.M5.Turn_OFF()
+            time.sleep(3)
+            self.M0.Turn_ON()
         self.reset_motors()
 
     def reset_motors(self):
