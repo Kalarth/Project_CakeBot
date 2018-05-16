@@ -23,11 +23,12 @@ class Fork(Tool):
 
     def pickup_cake(self, Position):
         Normal = bib.normalize(bib.vec(Position))
-        self.Arm.update([Position[0],Position[1],forklength],Normal,[0,0,-1],self.Arm.arm_size)
+        self.Arm.update([Position[0],Position[1],self.forklength],Normal,[0,0,-1],self.Arm.arm_size)
 
 
     def present_cake(self):
         self.Arm.update([0,0,self.Arm.arm_size-0.05],[0.5,0,0.5],[1,0,0],self.Arm.arm_size)
 
-    def __init__(self):
-        Tool.__init__(self)
+    def __init__(self, Robot, M0, M5):
+        Tool.__init__(self, Robot, M0, M5)
+        self.forklength=0.5

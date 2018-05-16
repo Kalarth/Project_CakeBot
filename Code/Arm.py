@@ -1,6 +1,6 @@
 import pypot.dynamixel
 import pypot.robot
-import bib
+import Arm_calculus as bib
 #import bibinverse as bib
 import math
 import time

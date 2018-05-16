@@ -29,15 +29,13 @@ class Brain():
     def Deactivate(self):
         M0.Turn_OFF()
         M5.Turn_OFF()
-        M0.destroy()
-
     def __init__(self):
         self.A = bot.Arm()
         self.M0 = mag.Magnet(12,25)
         self.M5 = mag.Magnet(33,25)
         self.M0.TURN_ON()
         self.Walkmode=Walk.Walk(A,M0,M5)
-        self.Forkmode=.Fork.Fork(A,M0,M5)
+        self.Forkmode=Fork.Fork(A,M0,M5)
         self.Cam=Camera.Camera(Walkmode.max_distance)
         self.way=[]
 """

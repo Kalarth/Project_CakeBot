@@ -12,5 +12,5 @@ class Tool:
 
         if orientation == 2:
 """
-    def __init__(self):
-        Move.__init__(self)
+    def __init__(self,  Robot, M0, M5):
+        Move.__init__(self, Robot, M0, M5)

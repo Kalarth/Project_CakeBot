@@ -15,30 +15,13 @@ class walk(Move):
     """
 
 
-"""
-    def checkmagnets(M0,M5):
-        LowerStatus = M0.PowerStatus
-        HigherStatus = M5.PowerStatus
-        if LowerStatus ==0 and HigherStatus==0 :
-            return 0 #Both Magnets are turned off SHOULDN'T HAPPEN
-
-        if LowerStatus ==1 and HigherStatus==0 :
-            return 1 #The lower magnet is turned on
-
-        if LowerStatus ==0 and HigherStatus==1 :
-            return 2 #The higher magnet is turned on, which means the arm is in inverted mode
-
-        if LowerStatus ==1 and HigherStatus==1 :
-            return 3 #Both magnets are turned on, should only happen when using the tool.
-
-"""
     def walkto_point(self,Position):
         """
         Position should be 3D coordinate in the form of a list [x,y,z]
         """
         orientation=Move.checkmagnets(self)
         if orientation == 1:
-            self.Arm.update([Position[0],Position[1],0.02],[0,0,1],[0,1,0],self.Arm.arm_size)
+            self.Arm.update([Position[0],Position[1],0.03],[0,0,1],[0,1,0],self.Arm.arm_size)
             time.sleep(8)
             self.Arm.update(Position,[0,0,1],[0,1,0],self.Arm.arm_size)
 
@@ -49,14 +32,16 @@ class walk(Move):
 
         if orientation == 2: #NOT FINISHED, NEED TO FIX THE DIRECTION TODO
             Direction = bib.normalize(bib.vec(Position))
-            #Arm.update(Position,[0,0,1],[0,1,0],Arm.arm_size)
-            self.Arm.update([Position[0],Position[1], 0.02],[0,0,1],Direction,self.Arm.arm_size) #NEED TO TEST
+            for i in range(len(Direction)):
+                Direction[i]=Direction[i]*(-1.0)            #Arm.update(Position,[0,0,1],[0,1,0],Arm.arm_size)
+            self.Arm.update([Position[0],Position[1], 0.03],[0,0,1],Direction,self.Arm.arm_size) #NEED TO TEST
             time.sleep(8)
             self.Arm.update(Position,[0,0,1],Direction,self.Arm.arm_size) #NEED TO TEST
             time.sleep(8)
+            self.M0.Turn_ON()
+            time.sleep(3)
             self.M5.Turn_OFF()
             time.sleep(3)
-            self.M0.Turn_ON()
         self.reset_motors()
 
     def reset_motors(self):
